@@ -1,6 +1,6 @@
 let Chess
 if (typeof require !== "undefined") {
-  Chess = require('../chess').Chess;
+  Chess = require('../chess');
 }
 
 describe("Perft", function() {
