@@ -413,7 +413,7 @@ const Chess = function(fen) {
   }
 
   function set_header(args) {
-    for (var i = 0; i < args.length; i += 2) {
+    for (let i = 0; i < args.length; i += 2) {
       if (typeof args[i] === 'string' && typeof args[i + 1] === 'string') {
         header[args[i]] = args[i + 1]
       }
@@ -521,7 +521,7 @@ const Chess = function(fen) {
         board[from].type === PAWN &&
         (rank(to) === RANK_8 || rank(to) === RANK_1)
       ) {
-        var pieces = [QUEEN, ROOK, BISHOP, KNIGHT]
+        const pieces = [QUEEN, ROOK, BISHOP, KNIGHT]
         for (var i = 0, len = pieces.length; i < len; i++) {
           moves.push(build_move(board, from, to, flags, pieces[i]))
         }
@@ -530,17 +530,17 @@ const Chess = function(fen) {
       }
     }
 
-    var moves = []
-    var us = turn
-    var them = swap_color(us)
-    var second_rank = { b: RANK_7, w: RANK_2 }
+    const moves = []
+    const us = turn
+    const them = swap_color(us)
+    const second_rank = { b: RANK_7, w: RANK_2 }
 
-    var first_sq = SQUARES.a8
-    var last_sq = SQUARES.h1
-    var single_square = false
+    let first_sq = SQUARES.a8
+    let last_sq = SQUARES.h1
+    let single_square = false
 
     /* do we want legal moves? */
-    var legal =
+    const legal =
       typeof options !== 'undefined' && 'legal' in options
         ? options.legal
         : true
@@ -563,19 +563,20 @@ const Chess = function(fen) {
         continue
       }
 
-      var piece = board[i]
+      const piece = board[i]
       if (piece == null || piece.color !== us) {
         continue
       }
 
+      let square
       if (piece.type === PAWN) {
         /* single square, non-capturing */
-        var square = i + PAWN_OFFSETS[us][0]
+        square = i + PAWN_OFFSETS[us][0]
         if (board[square] == null) {
           add_move(board, moves, i, square, BITS.NORMAL)
 
           /* double square */
-          var square = i + PAWN_OFFSETS[us][1]
+          square = i + PAWN_OFFSETS[us][1]
           if (second_rank[us] === rank(i) && board[square] == null) {
             add_move(board, moves, i, square, BITS.BIG_PAWN)
           }
@@ -583,7 +584,7 @@ const Chess = function(fen) {
 
         /* pawn captures */
         for (j = 2; j < 4; j++) {
-          var square = i + PAWN_OFFSETS[us][j]
+          square = i + PAWN_OFFSETS[us][j]
           if (square & 0x88) continue
 
           if (board[square] != null && board[square].color === them) {
@@ -594,8 +595,8 @@ const Chess = function(fen) {
         }
       } else {
         for (var j = 0, len = PIECE_OFFSETS[piece.type].length; j < len; j++) {
-          var offset = PIECE_OFFSETS[piece.type][j]
-          var square = i
+          const offset = PIECE_OFFSETS[piece.type][j]
+          square = i
 
           while (true) {
             square += offset
@@ -622,8 +623,8 @@ const Chess = function(fen) {
     if (!single_square || last_sq === kings[us]) {
       /* king-side castling */
       if (castling[us] & BITS.KSIDE_CASTLE) {
-        var castling_from = kings[us]
-        var castling_to = castling_from + 2
+        const castling_from = kings[us]
+        const castling_to = castling_from + 2
 
         if (
           board[castling_from + 1] == null &&
@@ -638,8 +639,8 @@ const Chess = function(fen) {
 
       /* queen-side castling */
       if (castling[us] & BITS.QSIDE_CASTLE) {
-        var castling_from = kings[us]
-        var castling_to = castling_from - 2
+        const castling_from = kings[us]
+        const castling_to = castling_from - 2
 
         if (
           board[castling_from - 1] == null &&
@@ -662,7 +663,7 @@ const Chess = function(fen) {
     }
 
     /* filter out illegal moves */
-    var legal_moves = []
+    const legal_moves = []
     for (var i = 0, len = moves.length; i < len; i++) {
       make_move(moves[i])
       if (!king_attacked(us)) {
@@ -685,14 +686,14 @@ const Chess = function(fen) {
    * 4. ... Ne7 is technically the valid SAN
    */
   function move_to_san(move, sloppy) {
-    var output = ''
+    let output = ''
 
     if (move.flags & BITS.KSIDE_CASTLE) {
       output = 'O-O'
     } else if (move.flags & BITS.QSIDE_CASTLE) {
       output = 'O-O-O'
     } else {
-      var disambiguator = get_disambiguator(move, sloppy)
+      const disambiguator = get_disambiguator(move, sloppy)
 
       if (move.piece !== PAWN) {
         output += move.piece.toUpperCase() + disambiguator
@@ -741,9 +742,9 @@ const Chess = function(fen) {
       /* if empty square or wrong color */
       if (board[i] == null || board[i].color !== color) continue
 
-      var piece = board[i]
-      var difference = i - square
-      var index = difference + 119
+      const piece = board[i]
+      const difference = i - square
+      const index = difference + 119
 
       if (ATTACKS[index] & (1 << SHIFTS[piece.type])) {
         if (piece.type === PAWN) {
@@ -758,10 +759,10 @@ const Chess = function(fen) {
         /* if the piece is a knight or a king */
         if (piece.type === 'n' || piece.type === 'k') return true
 
-        var offset = RAYS[index]
-        var j = i + offset
+        const offset = RAYS[index]
+        let j = i + offset
 
-        var blocked = false
+        let blocked = false
         while (j !== square) {
           if (board[j] != null) {
             blocked = true
@@ -794,19 +795,19 @@ const Chess = function(fen) {
   }
 
   function insufficient_material() {
-    var pieces = {}
-    var bishops = []
-    var num_pieces = 0
-    var sq_color = 0
+    const pieces = {}
+    const bishops = []
+    let num_pieces = 0
+    let sq_color = 0
 
-    for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+    for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
       sq_color = (sq_color + 1) % 2
       if (i & 0x88) {
         i += 7
         continue
       }
 
-      var piece = board[i]
+      const piece = board[i]
       if (piece) {
         pieces[piece.type] = piece.type in pieces ? pieces[piece.type] + 1 : 1
         if (piece.type === BISHOP) {
@@ -827,12 +828,11 @@ const Chess = function(fen) {
       return true
     } else if (num_pieces === pieces[BISHOP] + 2) {
       /* kb vs. kb where any number of bishops are all on the same color */
-      var sum = 0
-      var len = bishops.length
-      for (var i = 0; i < len; i++) {
-        sum += bishops[i]
+      let sum = 0
+      for (const bishop of bishops) {
+        sum += bishop
       }
-      if (sum === 0 || sum === len) {
+      if (sum === 0 || sum === bishops.length) {
         return true
       }
     }
@@ -846,12 +846,12 @@ const Chess = function(fen) {
      * Zobrist key would be maintained in the make_move/undo_move functions,
      * avoiding the costly that we do below.
      */
-    var moves = []
-    var positions = {}
-    var repetition = false
+    const moves = []
+    const positions = {}
+    let repetition = false
 
     while (true) {
-      var move = undo_move()
+      const move = undo_move()
       if (!move) break
       moves.push(move)
     }
@@ -859,7 +859,7 @@ const Chess = function(fen) {
     while (true) {
       /* remove the last two fields in the FEN string, they're not needed
        * when checking for draw by rep */
-      var fen = generate_fen()
+      const fen = generate_fen()
         .split(' ')
         .slice(0, 4)
         .join(' ')
@@ -892,8 +892,8 @@ const Chess = function(fen) {
   }
 
   function make_move(move) {
-    var us = turn
-    var them = swap_color(us)
+    const us = turn
+    const them = swap_color(us)
     push(move)
 
     board[move.to] = board[move.from]
@@ -919,13 +919,13 @@ const Chess = function(fen) {
 
       /* if we castled, move the rook next to the king */
       if (move.flags & BITS.KSIDE_CASTLE) {
-        var castling_to = move.to - 1
-        var castling_from = move.to + 1
+        const castling_to = move.to - 1
+        const castling_from = move.to + 1
         board[castling_to] = board[castling_from]
         board[castling_from] = null
       } else if (move.flags & BITS.QSIDE_CASTLE) {
-        var castling_to = move.to + 1
-        var castling_from = move.to - 2
+        const castling_to = move.to + 1
+        const castling_from = move.to - 2
         board[castling_to] = board[castling_from]
         board[castling_from] = null
       }
@@ -987,12 +987,12 @@ const Chess = function(fen) {
   }
 
   function undo_move() {
-    var old = history.pop()
+    const old = history.pop()
     if (old == null) {
       return null
     }
 
-    var move = old.move
+    const move = old.move
     kings = old.kings
     turn = old.turn
     castling = old.castling
@@ -1000,8 +1000,8 @@ const Chess = function(fen) {
     half_moves = old.half_moves
     move_number = old.move_number
 
-    var us = turn
-    var them = swap_color(turn)
+    const us = turn
+    const them = swap_color(turn)
 
     board[move.from] = board[move.to]
     board[move.from].type = move.piece // to undo any promotions
@@ -1010,17 +1010,12 @@ const Chess = function(fen) {
     if (move.flags & BITS.CAPTURE) {
       board[move.to] = { type: move.captured, color: them }
     } else if (move.flags & BITS.EP_CAPTURE) {
-      var index
-      if (us === BLACK) {
-        index = move.to - 16
-      } else {
-        index = move.to + 16
-      }
+      const index = (us === BLACK) ? move.to - 16 : move.to + 16;
       board[index] = { type: PAWN, color: them }
     }
 
     if (move.flags & (BITS.KSIDE_CASTLE | BITS.QSIDE_CASTLE)) {
-      var castling_to, castling_from
+      let castling_to, castling_from
       if (move.flags & BITS.KSIDE_CASTLE) {
         castling_to = move.to + 1
         castling_from = move.to - 1
@@ -1038,20 +1033,20 @@ const Chess = function(fen) {
 
   /* this function is used to uniquely identify ambiguous moves */
   function get_disambiguator(move, sloppy) {
-    var moves = generate_moves({ legal: !sloppy })
+    const moves = generate_moves({ legal: !sloppy })
 
-    var from = move.from
-    var to = move.to
-    var piece = move.piece
+    const from = move.from
+    const to = move.to
+    const piece = move.piece
 
-    var ambiguities = 0
-    var same_rank = 0
-    var same_file = 0
+    let ambiguities = 0
+    let same_rank = 0
+    let same_file = 0
 
     for (var i = 0, len = moves.length; i < len; i++) {
-      var ambig_from = moves[i].from
-      var ambig_to = moves[i].to
-      var ambig_piece = moves[i].piece
+      const ambig_from = moves[i].from
+      const ambig_to = moves[i].to
+      const ambig_piece = moves[i].piece
 
       /* if a move of the same piece type ends on the same to square, we'll
        * need to add a disambiguator to the algebraic notation
@@ -1090,7 +1085,7 @@ const Chess = function(fen) {
   }
 
   function ascii() {
-    var s = '   +------------------------+\n'
+    const s = '   +------------------------+\n'
     for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
       /* display the rank */
       if (file(i) === 0) {
@@ -1101,9 +1096,9 @@ const Chess = function(fen) {
       if (board[i] == null) {
         s += ' . '
       } else {
-        var piece = board[i].type
-        var color = board[i].color
-        var symbol = color === WHITE ? piece.toUpperCase() : piece.toLowerCase()
+        const piece = board[i].type
+        const color = board[i].color
+        const symbol = color === WHITE ? piece.toUpperCase() : piece.toLowerCase()
         s += ' ' + symbol + ' '
       }
 
@@ -1121,40 +1116,41 @@ const Chess = function(fen) {
   // convert a move from Standard Algebraic Notation (SAN) to 0x88 coordinates
   function move_from_san(move, sloppy) {
     // strip off any move decorations: e.g Nf3+?!
-    var clean_move = stripped_san(move)
+    const clean_move = stripped_san(move)
 
+    let matches, piece, from, to, promotion;
     // if we're using the sloppy parser run a regex to grab piece, to, and from
     // this should parse invalid SAN like: Pe2-e4, Rc1c4, Qf3xf7
     if (sloppy) {
-      var matches = clean_move.match(
+      matches = clean_move.match(
         /([pnbrqkPNBRQK])?([a-h][1-8])x?-?([a-h][1-8])([qrbnQRBN])?/
       )
       if (matches) {
-        var piece = matches[1]
-        var from = matches[2]
-        var to = matches[3]
-        var promotion = matches[4]
+        piece = matches[1]
+        from = matches[2]
+        to = matches[3]
+        promotion = matches[4]
       }
     }
 
-    var moves = generate_moves()
-    for (var i = 0, len = moves.length; i < len; i++) {
+    const moves = generate_moves()
+    for (const move of moves) {
       // try the strict parser first, then the sloppy parser if requested
       // by the user
       if (
-        clean_move === stripped_san(move_to_san(moves[i])) ||
-        (sloppy && clean_move === stripped_san(move_to_san(moves[i], true)))
+        clean_move === stripped_san(move_to_san(move)) ||
+        (sloppy && clean_move === stripped_san(move_to_san(move, true)))
       ) {
-        return moves[i]
+        return move
       } else {
         if (
           matches &&
-          (!piece || piece.toLowerCase() == moves[i].piece) &&
-          SQUARES[from] == moves[i].from &&
-          SQUARES[to] == moves[i].to &&
-          (!promotion || promotion.toLowerCase() == moves[i].promotion)
+          (!piece || piece.toLowerCase() == move.piece) &&
+          SQUARES[from] == move.from &&
+          SQUARES[to] == move.to &&
+          (!promotion || promotion.toLowerCase() == move.promotion)
         ) {
-          return moves[i]
+          return move
         }
       }
     }
