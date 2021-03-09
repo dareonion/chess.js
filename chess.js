@@ -583,7 +583,7 @@ const Chess = function(fen) {
         }
 
         /* pawn captures */
-        for (j = 2; j < 4; j++) {
+        for (let j = 2; j < 4; j++) {
           square = i + PAWN_OFFSETS[us][j]
           if (square & 0x88) continue
 
