@@ -556,7 +556,7 @@ const Chess = function(fen) {
       }
     }
 
-    for (var i = first_sq; i <= last_sq; i++) {
+    for (let i = first_sq; i <= last_sq; i++) {
       /* did we run off the end of the board */
       if (i & 0x88) {
         i += 7
@@ -936,12 +936,12 @@ const Chess = function(fen) {
 
     /* turn off castling if we move a rook */
     if (castling[us]) {
-      for (var i = 0, len = ROOKS[us].length; i < len; i++) {
+      for (const rook of ROOKS[us]) {
         if (
-          move.from === ROOKS[us][i].square &&
-          castling[us] & ROOKS[us][i].flag
+          move.from === rook.square &&
+          castling[us] & rook.flag
         ) {
-          castling[us] ^= ROOKS[us][i].flag
+          castling[us] ^= rook.flag
           break
         }
       }
@@ -949,12 +949,12 @@ const Chess = function(fen) {
 
     /* turn off castling if we capture a rook */
     if (castling[them]) {
-      for (var i = 0, len = ROOKS[them].length; i < len; i++) {
+      for (const rook of ROOKS[them]) {
         if (
-          move.to === ROOKS[them][i].square &&
-          castling[them] & ROOKS[them][i].flag
+          move.to === rook.square &&
+          castling[them] & rook.flag
         ) {
-          castling[them] ^= ROOKS[them][i].flag
+          castling[them] ^= rook.flag
           break
         }
       }
@@ -1043,10 +1043,10 @@ const Chess = function(fen) {
     let same_rank = 0
     let same_file = 0
 
-    for (var i = 0, len = moves.length; i < len; i++) {
-      const ambig_from = moves[i].from
-      const ambig_to = moves[i].to
-      const ambig_piece = moves[i].piece
+    for (const move of moves) {
+      const ambig_from = move.from
+      const ambig_to = move.to
+      const ambig_piece = move.piece
 
       /* if a move of the same piece type ends on the same to square, we'll
        * need to add a disambiguator to the algebraic notation
@@ -1085,8 +1085,8 @@ const Chess = function(fen) {
   }
 
   function ascii() {
-    const s = '   +------------------------+\n'
-    for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+    let s = '   +------------------------+\n'
+    for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
       /* display the rank */
       if (file(i) === 0) {
         s += ' ' + '87654321'[rank(i)] + ' |'
@@ -1170,7 +1170,7 @@ const Chess = function(fen) {
   }
 
   function algebraic(i) {
-    var f = file(i),
+    const f = file(i),
       r = rank(i)
     return 'abcdefgh'.substring(f, f + 1) + '87654321'.substring(r, r + 1)
   }
@@ -1185,14 +1185,14 @@ const Chess = function(fen) {
 
   /* pretty = external move object */
   function make_pretty(ugly_move) {
-    var move = clone(ugly_move)
+    const move = clone(ugly_move)
     move.san = move_to_san(move, false)
     move.to = algebraic(move.to)
     move.from = algebraic(move.from)
 
-    var flags = ''
+    let flags = ''
 
-    for (var flag in BITS) {
+    for (const flag in BITS) {
       if (BITS[flag] & move.flags) {
         flags += FLAGS[flag]
       }
@@ -1203,9 +1203,9 @@ const Chess = function(fen) {
   }
 
   function clone(obj) {
-    var dupe = obj instanceof Array ? [] : {}
+    const dupe = obj instanceof Array ? [] : {}
 
-    for (var property in obj) {
+    for (const property in obj) {
       if (typeof property === 'object') {
         dupe[property] = clone(obj[property])
       } else {
@@ -1224,12 +1224,12 @@ const Chess = function(fen) {
    * DEBUGGING UTILITIES
    ****************************************************************************/
   function perft(depth) {
-    var moves = generate_moves({ legal: false })
-    var nodes = 0
-    var color = turn
+    const moves = generate_moves({ legal: false })
+    let nodes = 0
+    const color = turn
 
-    for (var i = 0, len = moves.length; i < len; i++) {
-      make_move(moves[i])
+    for (const move of moves) {
+      make_move(move)
       if (!king_attacked(color)) {
         if (depth - 1 > 0) {
           var child_nodes = perft(depth - 1)
@@ -1263,8 +1263,8 @@ const Chess = function(fen) {
        * so: for (var sq in SQUARES) { keys.push(sq); } might not be
        * ordered correctly
        */
-      var keys = []
-      for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+      const keys = []
+      for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
         if (i & 0x88) {
           i += 7
           continue
@@ -1293,10 +1293,10 @@ const Chess = function(fen) {
        * unnecessary move keys resulting from a verbose call.
        */
 
-      var ugly_moves = generate_moves(options)
-      var moves = []
+      const ugly_moves = generate_moves(options)
+      const moves = []
 
-      for (var i = 0, len = ugly_moves.length; i < len; i++) {
+      for (const ugly_move of ugly_moves) {
         /* does the user want a full move object (most likely not), or just
          * SAN
          */
@@ -1305,9 +1305,9 @@ const Chess = function(fen) {
           'verbose' in options &&
           options.verbose
         ) {
-          moves.push(make_pretty(ugly_moves[i]))
+          moves.push(make_pretty(ugly_move))
         } else {
-          moves.push(move_to_san(ugly_moves[i], false))
+          moves.push(move_to_san(ugly_move, false))
         }
       }
 
@@ -1362,10 +1362,10 @@ const Chess = function(fen) {
     },
 
     board: function() {
-      var output = [],
-        row = []
+      const output = [];
+      let row = [];
 
-      for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+      for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
         if (board[i] == null) {
           row.push(null)
         } else {
@@ -1385,16 +1385,16 @@ const Chess = function(fen) {
       /* using the specification from http://www.chessclub.com/help/PGN-spec
        * example for html usage: .pgn({ max_width: 72, newline_char: "<br />" })
        */
-      var newline =
+      const newline =
         typeof options === 'object' && typeof options.newline_char === 'string'
           ? options.newline_char
           : '\n'
-      var max_width =
+      const max_width =
         typeof options === 'object' && typeof options.max_width === 'number'
           ? options.max_width
           : 0
-      var result = []
-      var header_exists = false
+      const result = []
+      let header_exists = false
 
       /* add the PGN header headerrmation */
       for (var i in header) {
