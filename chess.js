@@ -1513,13 +1513,10 @@ const Chess = function(fen = DEFAULT_POSITION) {
       return result.join('')
     },
 
-    load_pgn: function(pgn, options) {
+    load_pgn: function(pgn, options = {}) {
       // allow the user to specify the sloppy move parser to work around over
       // disambiguation bugs in Fritz and Chessbase
-      const sloppy =
-        typeof options !== 'undefined' && 'sloppy' in options
-          ? options.sloppy
-          : false
+      const sloppy = options.sloppy ?? false;
 
       function mask(str) {
         return str.replace(/\\/g, '\\')
@@ -1532,9 +1529,8 @@ const Chess = function(fen = DEFAULT_POSITION) {
         return false
       }
 
-      function parse_pgn_header(header, options) {
+      function parse_pgn_header(header, options = {}) {
         const newline_char =
-          typeof options === 'object' &&
           typeof options.newline_char === 'string'
             ? options.newline_char
             : '\r?\n'
@@ -1553,7 +1549,7 @@ const Chess = function(fen = DEFAULT_POSITION) {
       }
 
       const newline_char =
-        typeof options === 'object' && typeof options.newline_char === 'string'
+        typeof options.newline_char === 'string'
           ? options.newline_char
           : '\r?\n'
 
@@ -1698,7 +1694,7 @@ const Chess = function(fen = DEFAULT_POSITION) {
       /* examine last move */
       move = moves[moves.length - 1]
       if (POSSIBLE_RESULTS.indexOf(move) > -1) {
-        if (has_keys(header) && typeof header.Result === 'undefined') {
+        if (has_keys(header) && !('Result' in header)) {
           set_header(['Result', move])
         }
       } else {
@@ -1724,7 +1720,7 @@ const Chess = function(fen = DEFAULT_POSITION) {
       return turn
     },
 
-    move: function(move, options) {
+    move: function(move, options = {}) {
       /* The move function can be called with in the following parameters:
        *
        * .move('Nxb7')      <- where 'move' is a case-sensitive SAN string
@@ -1737,27 +1733,22 @@ const Chess = function(fen = DEFAULT_POSITION) {
 
       // allow the user to specify the sloppy move parser to work around over
       // disambiguation bugs in Fritz and Chessbase
-      const sloppy =
-        typeof options !== 'undefined' && 'sloppy' in options
-          ? options.sloppy
-          : false
+      const sloppy = options.sloppy ?? false;
 
       let move_obj = null
 
       if (typeof move === 'string') {
         move_obj = move_from_san(move, sloppy)
       } else if (typeof move === 'object') {
-        const moves = generate_moves()
-
         /* convert the pretty move object to an ugly move object */
-        for (let i = 0, len = moves.length; i < len; i++) {
+        for (const move_elt of generate_moves()) {
           if (
-            move.from === algebraic(moves[i].from) &&
-            move.to === algebraic(moves[i].to) &&
-            (!('promotion' in moves[i]) ||
-              move.promotion === moves[i].promotion)
+            move.from === algebraic(move_elt.from) &&
+            move.to === algebraic(move_elt.to) &&
+            (!('promotion' in move_elt) ||
+              move.promotion === move_elt.promotion)
           ) {
-            move_obj = moves[i]
+            move_obj = move_elt;
             break
           }
         }
@@ -1812,13 +1803,10 @@ const Chess = function(fen = DEFAULT_POSITION) {
       return null
     },
 
-    history: function(options) {
+    history: function(options = {}) {
       const reversed_history = []
       const move_history = []
-      const verbose =
-        typeof options !== 'undefined' &&
-        'verbose' in options &&
-        options.verbose
+      const verbose = options.verbose ?? false
 
       while (history.length > 0) {
         reversed_history.push(undo_move())
