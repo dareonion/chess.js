@@ -1632,7 +1632,7 @@ const Chess = function(fen) {
       }
 
       const from_hex = function(string) {
-        return string.length == 0
+        return string.length === 0
           ? ''
           : decodeURIComponent('%' + string.match(/.{1,2}/g).join('%'))
       }

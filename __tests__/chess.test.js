@@ -1,9 +1,10 @@
-if (typeof require != "undefined") {
-  var Chess = require('../chess').Chess;
+let Chess
+if (typeof require !== "undefined") {
+  Chess = require('../chess').Chess;
 }
 
 describe("Perft", function() {
-  var perfts = [
+  const perfts = [
     {fen: 'r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1',
       depth: 3, nodes: 97862},
     {fen: '8/PPP4k/8/8/8/8/4Kppp/8 w - - 0 1',
@@ -15,11 +16,11 @@ describe("Perft", function() {
   ];
 
   perfts.forEach(function(perft) {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load(perft.fen);
 
     it(perft.fen, function() {
-      var nodes = chess.perft(perft.depth);
+      const nodes = chess.perft(perft.depth);
       expect(nodes).toBe(perft.nodes);
     });
 
@@ -28,8 +29,7 @@ describe("Perft", function() {
 
 
 describe("Single Square Move Generation", function() {
-
-  var positions = [
+  const positions = [
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       square: 'e2', verbose: false, moves: ['e3', 'e4']},
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
@@ -57,13 +57,13 @@ describe("Single Square Move Generation", function() {
   ];
 
   positions.forEach(function(position) {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load(position.fen);
 
     it(position.fen + ' ' + position.square, function() {
 
-      var moves = chess.moves({square: position.square, verbose: position.verbose});
-      var passed = position.moves.length == moves.length;
+      const moves = chess.moves({square: position.square, verbose: position.verbose});
+      let passed = position.moves.length == moves.length;
 
       for (var j = 0; j < moves.length; j++) {
         if (!position.verbose) {
@@ -87,8 +87,8 @@ describe("Single Square Move Generation", function() {
 
 describe("Checkmate", function() {
 
-  var chess = new Chess();
-  var checkmates = [
+  const chess = new Chess();
+  const checkmates = [
     '8/5r2/4K1q1/4p3/3k4/8/8/8 w - - 0 7',
     '4r2r/p6p/1pnN2p1/kQp5/3pPq2/3P4/PPP3PP/R5K1 b - - 0 2',
     'r3k2r/ppp2p1p/2n1p1p1/8/2B2P1q/2NPb1n1/PP4PP/R2Q3K w kq - 0 8',
@@ -109,13 +109,13 @@ describe("Checkmate", function() {
 
 describe("Stalemate", function() {
 
-  var stalemates = [
+  const stalemates = [
     '1R6/8/8/8/8/8/7R/k6K b - - 0 1',
     '8/8/5k2/p4p1p/P4K1P/1r6/8/8 w - - 0 2',
   ];
 
   stalemates.forEach(function(stalemate) {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load(stalemate);
 
     it(stalemate, function() {
@@ -129,7 +129,7 @@ describe("Stalemate", function() {
 
 describe("Insufficient Material", function() {
 
-  var positions = [
+  const positions = [
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', draw: false},
     {fen: '8/8/8/8/8/8/8/k6K w - - 0 1', draw: true},
     {fen: '8/2p5/8/8/8/8/8/k6K w - - 0 1', draw: false},
@@ -142,7 +142,7 @@ describe("Insufficient Material", function() {
   ];
 
   positions.forEach(function(position) {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load(position.fen);
 
     it(position.fen, function() {
@@ -160,7 +160,7 @@ describe("Insufficient Material", function() {
 
 describe("Threefold Repetition", function() {
 
-  var positions = [
+  const positions = [
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
      moves: ['Nf3', 'Nf6', 'Ng1', 'Ng8', 'Nf3', 'Nf6', 'Ng1', 'Ng8']},
 
@@ -170,12 +170,12 @@ describe("Threefold Repetition", function() {
   ];
 
   positions.forEach(function(position) {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load(position.fen);
 
     it(position.fen, function() {
 
-      var passed = true;
+      const passed = true;
       for (var j = 0; j < position.moves.length; j++) {
         if (chess.in_threefold_repetition()) {
           passed = false;
@@ -195,7 +195,7 @@ describe("Threefold Repetition", function() {
 
 describe("Algebraic Notation", function() {
 
-  var positions = [
+  const positions = [
     {fen: '7k/3R4/3p2Q1/6Q1/2N1N3/8/8/3R3K w - - 0 1',
      moves: ['Rd8#', 'Re7', 'Rf7', 'Rg7', 'Rh7#', 'R7xd6', 'Rc7', 'Rb7', 'Ra7',
              'Qf7', 'Qe8#', 'Qg7#', 'Qg8#', 'Qh7#', 'Q6h6#', 'Q6h5#', 'Q6f5',
@@ -234,12 +234,12 @@ describe("Algebraic Notation", function() {
   ];
 
   positions.forEach(function(position) {
-    var chess = new Chess();
-    var passed = true;
+    const chess = new Chess();
+    const passed = true;
     chess.load(position.fen);
 
     it(position.fen, function() {
-      var moves = chess.moves();
+      const moves = chess.moves();
       if (moves.length != position.moves.length) {
         passed = false;
       } else {
@@ -260,9 +260,9 @@ describe("Algebraic Notation", function() {
 
 describe("Get/Put/Remove", function() {
 
-  var chess = new Chess();
-  var passed = true;
-  var positions = [
+  const chess = new Chess();
+  let passed = true;
+  const positions = [
     {pieces: {a7: {type: chess.PAWN, color: chess.WHITE},
               b7: {type: chess.PAWN, color: chess.BLACK},
               c7: {type: chess.KNIGHT, color: chess.WHITE},
@@ -318,14 +318,14 @@ describe("Get/Put/Remove", function() {
        * piece values/color
        */
       for (var j = 0; j < chess.SQUARES.length; j++) {
-        var square = chess.SQUARES[j];
+        const square = chess.SQUARES[j];
         if (!(square in position.pieces)) {
           if (chess.get(square)) {
             passed = false;
             break;
           }
         } else {
-          var piece = chess.get(square);
+          const piece = chess.get(square);
           if (!(piece &&
               piece.type == position.pieces[square].type &&
               piece.color == position.pieces[square].color)) {
@@ -338,8 +338,8 @@ describe("Get/Put/Remove", function() {
       if (passed) {
         /* remove the pieces */
         for (var j = 0; j < chess.SQUARES.length; j++) {
-          var square = chess.SQUARES[j];
-          var piece = chess.remove(square);
+          const square = chess.SQUARES[j];
+          const piece = chess.remove(square);
           if ((!(square in position.pieces)) && piece) {
             passed = false;
             break;
@@ -372,7 +372,7 @@ describe("Get/Put/Remove", function() {
 
 describe("FEN", function() {
 
-  var positions = [
+  const positions = [
     {fen: '8/8/8/8/8/8/8/8 w - - 0 1', should_pass: true},
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', should_pass: true},
     {fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', should_pass: true},
@@ -389,7 +389,7 @@ describe("FEN", function() {
   ];
 
   positions.forEach(function(position) {
-    var chess = new Chess();
+    const chess = new Chess();
 
     it(position.fen + ' (' + position.should_pass + ')', function() {
       chess.load(position.fen);
@@ -403,9 +403,9 @@ describe("FEN", function() {
 
 describe("PGN", function() {
 
-  var passed = true;
-  var error_message;
-  var positions = [
+  let passed = true;
+  let error_message;
+  const positions = [
     {moves: ['d4', 'd5', 'Nf3', 'Nc6', 'e3', 'e6', 'Bb5', 'g5', 'O-O', 'Qf6', 'Nc3',
              'Bd7', 'Bxc6', 'Bxc6', 'Re1', 'O-O-O', 'a4', 'Bb4', 'a5', 'b5', 'axb6',
              'axb6', 'Ra8+', 'Kd7', 'Ne5+', 'Kd6', 'Rxd8+', 'Qxd8', 'Nxf7+', 'Ke7',
@@ -448,7 +448,7 @@ describe("PGN", function() {
   positions.forEach(function(position, i) {
 
     it('Postion: ' + i, function() {
-      var chess = ("starting_position" in position) ? new Chess(position.starting_position) : new Chess();
+      const chess = ("starting_position" in position) ? new Chess(position.starting_position) : new Chess();
       passed = true;
       error_message = "";
       for (var j = 0; j < position.moves.length; j++) {
@@ -459,8 +459,8 @@ describe("PGN", function() {
       }
 
       chess.header.apply(null, position.header);
-      var pgn = chess.pgn({max_width:position.max_width, newline_char:position.newline_char});
-      var fen = chess.fen();
+      const pgn = chess.pgn({max_width:position.max_width, newline_char:position.newline_char});
+      const fen = chess.fen();
       passed = pgn === position.pgn && fen === position.fen;
       expect(passed && error_message.length == 0).toBe(true);
     });
@@ -472,8 +472,8 @@ describe("PGN", function() {
 
 describe("Load PGN", function() {
 
-  var chess = new Chess();
-  var tests = [
+  const chess = new Chess();
+  const tests = [
      {pgn: [
        '[Event "Reykjavik WCh"]',
        '[Site "Reykjavik WCh"]',
@@ -743,15 +743,15 @@ describe("Load PGN", function() {
     },
   ];
 
-  var newline_chars = ['\n', '<br />', '\r\n', 'BLAH'];
+  const newline_chars = ['\n', '<br />', '\r\n', 'BLAH'];
 
   tests.forEach(function(t, i) {
     newline_chars.forEach(function(newline, j) {
       it(i + String.fromCharCode(97 + j), function() {
-        var sloppy = t.sloppy || false;
-        var result = chess.load_pgn(t.pgn.join(newline), {sloppy: sloppy,
+        const sloppy = t.sloppy || false;
+        const result = chess.load_pgn(t.pgn.join(newline), {sloppy: sloppy,
                                                           newline_char: newline});
-        var should_pass = t.expect;
+        const should_pass = t.expect;
 
         /* some tests are expected to fail */
         if (should_pass) {
@@ -778,7 +778,7 @@ describe("Load PGN", function() {
 
   // special case dirty file containing a mix of \n and \r\n
   it('dirty pgn', function() {
-    var pgn =
+    const pgn =
          '[Event "Reykjavik WCh"]\n' +
          '[Site "Reykjavik WCh"]\n' +
          '[Date "1972.01.07"]\n' +
@@ -801,7 +801,7 @@ describe("Load PGN", function() {
          '32. Qe5 Qe8 33. a4 Qd8 34. R1f2 Qe8 35. R2f3 Qd8 36. Bd3 Qe8\n' +
          '37. Qe4 Nf6 38. Rxf6 gxf6 39. Rxf6 Kg8 40. Bc4 Kh8 41. Qf4 1-0\n';
 
-    var result = chess.load_pgn(pgn, { newline_char: '\r?\n' });
+    const result = chess.load_pgn(pgn, { newline_char: '\r?\n' });
     expect(result).toBe(true);
 
     expect(chess.load_pgn(pgn)).toBe(true);
@@ -811,7 +811,7 @@ describe("Load PGN", function() {
 });
 
 describe("Manipulate Comments", function() {
-  var is_empty = function (object) {
+  const is_empty = function (object) {
     for (var property in object) {
       if (object.hasOwnProperty(property)) {
         return false;
@@ -821,7 +821,7 @@ describe("Manipulate Comments", function() {
   };
 
   it('no comments', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     expect(chess.get_comment())
       .toBeUndefined();
     expect(chess.get_comments())
@@ -836,7 +836,7 @@ describe("Manipulate Comments", function() {
   });
 
   it('comment for initial position', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.set_comment('starting position');
     expect(chess.get_comment())
       .toEqual('starting position');
@@ -847,9 +847,9 @@ describe("Manipulate Comments", function() {
   });
 
   it('comment for first move', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.move('e4');
-    var e4 = chess.fen();
+    const e4 = chess.fen();
     chess.set_comment('good move');
     expect(chess.get_comment())
       .toEqual('good move');
@@ -865,7 +865,7 @@ describe("Manipulate Comments", function() {
   });
 
   it('comment for last move', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.move('e4');
     chess.move('e6');
     chess.set_comment('dubious move');
@@ -878,16 +878,16 @@ describe("Manipulate Comments", function() {
   });
 
   it('comment with brackets', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.set_comment('{starting position}');
     expect(chess.get_comment())
       .toEqual('[starting position]');
   });
 
   it('comments for everything', function() {
-    var chess = new Chess();
+    const chess = new Chess();
 
-    var initial = chess.fen();
+    const initial = chess.fen();
     chess.set_comment('starting position');
     expect(chess.get_comment())
       .toEqual('starting position');
@@ -897,7 +897,7 @@ describe("Manipulate Comments", function() {
       .toEqual('{starting position}');
 
     chess.move('e4');
-    var e4 = chess.fen();
+    const e4 = chess.fen();
     chess.set_comment('good move');
     expect(chess.get_comment())
       .toEqual('good move');
@@ -910,7 +910,7 @@ describe("Manipulate Comments", function() {
       .toEqual('{starting position} 1. e4 {good move}');
 
     chess.move('e6');
-    var e6 = chess.fen();
+    const e6 = chess.fen();
     chess.set_comment('dubious move');
     expect(chess.get_comment())
       .toEqual('dubious move');
@@ -925,18 +925,18 @@ describe("Manipulate Comments", function() {
   });
 
   it('delete comments', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     expect(chess.delete_comment())
       .toBeUndefined();
     expect(chess.delete_comments())
       .toEqual([]);
-    var initial = chess.fen();
+    const initial = chess.fen();
     chess.set_comment('starting position');
     chess.move('e4');
-    var e4 = chess.fen();
+    const e4 = chess.fen();
     chess.set_comment('good move');
     chess.move('e6');
-    var e6 = chess.fen();
+    const e6 = chess.fen();
     chess.set_comment('dubious move');
     expect(chess.get_comments())
       .toEqual([
@@ -960,7 +960,7 @@ describe("Manipulate Comments", function() {
   });
 
   it('prune comments', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.move('e4');
     chess.set_comment('tactical');
     chess.undo();
@@ -973,8 +973,8 @@ describe("Manipulate Comments", function() {
   });
 
   it('clear comments', function() {
-    var test = function(fn) {
-      var chess = new Chess();
+    const test = function(fn) {
+      const chess = new Chess();
       chess.move('e4');
       chess.set_comment('good move');
       expect(chess.get_comments())
@@ -993,7 +993,7 @@ describe("Manipulate Comments", function() {
 
 describe('Format Comments', function() {
   it('wrap comments', function() {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.move('e4');
     chess.set_comment('good   move');
     chess.move('e5');
@@ -1021,7 +1021,7 @@ describe('Format Comments', function() {
 });
 
 describe('Load Comments', function() {
-  var tests = [
+  const tests = [
     {
       name: 'bracket comments',
       input: '1. e4 {good move} e5 {classical response}',
@@ -1086,7 +1086,7 @@ describe('Load Comments', function() {
 
   tests.forEach(function(test) {
     it(`load ${test.name}`, function() {
-      var chess = new Chess();
+      const chess = new Chess();
       chess.load_pgn(test.input);
       expect(chess.pgn())
         .toEqual(test.output);
@@ -1096,7 +1096,7 @@ describe('Load Comments', function() {
 
 describe("Make Move", function() {
 
-  var positions = [
+  const positions = [
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
      legal: true,
      move: 'e4',
@@ -1146,11 +1146,11 @@ describe("Make Move", function() {
   ];
 
   positions.forEach(function(position) {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load(position.fen);
     it(position.fen + ' (' + position.move + ' ' + position.legal + ')', function() {
-      var sloppy = position.sloppy || false;
-      var result = chess.move(position.move, {sloppy: sloppy});
+      const sloppy = position.sloppy || false;
+      const result = chess.move(position.move, {sloppy: sloppy});
       if (position.legal) {
         expect(result
                && chess.fen() == position.next
@@ -1167,8 +1167,8 @@ describe("Make Move", function() {
 
 describe("Validate FEN", function() {
 
-  var chess = new Chess();
-  var positions = [
+  const chess = new Chess();
+  const positions = [
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNRw KQkq - 0 1',   error_number: 1},
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 x',  error_number: 2},
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0',  error_number: 2},
@@ -1298,7 +1298,7 @@ describe("Validate FEN", function() {
   positions.forEach(function(position) {
 
     it(position.fen + ' (valid: ' + (position.error_number  == 0) + ')', function() {
-      var result = chess.validate_fen(position.fen);
+      const result = chess.validate_fen(position.fen);
       expect(result.error_number == position.error_number).toBe(true);
     });
 
@@ -1307,8 +1307,8 @@ describe("Validate FEN", function() {
 
 describe("History", function() {
 
-  var chess = new Chess();
-  var tests = [
+  const chess = new Chess();
+  const tests = [
      {verbose: false,
       fen: '4q2k/2r1r3/4PR1p/p1p5/P1Bp1Q1P/1P6/6P1/6K1 b - - 4 41',
       moves: ['c4', 'e6', 'Nf3', 'd5', 'd4', 'Nf6', 'Nc3', 'Be7', 'Bg5', 'O-O', 'e3', 'h6',
@@ -1407,7 +1407,7 @@ describe("History", function() {
   ];
 
   tests.forEach(function(t, i) {
-    var passed = true;
+    const passed = true;
 
     it('History ' + i, function() {
       chess.reset();
@@ -1416,7 +1416,7 @@ describe("History", function() {
         chess.move(t.moves[j])
       }
 
-      var history = chess.history({verbose: t.verbose});
+      const history = chess.history({verbose: t.verbose});
       if (t.fen != chess.fen()) {
         passed = false;
       } else if (history.length != t.moves.length) {
@@ -1446,7 +1446,7 @@ describe("History", function() {
 
 describe('Board Tests', function() {
 
-  var tests = [
+  const tests = [
     {fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       board: [[{type: 'r', color: 'b'},
                {type: 'n', color: 'b'},
@@ -1548,7 +1548,7 @@ describe('Board Tests', function() {
 
   tests.forEach(function(test) {
     it('Board - ' + test.fen, function() {
-      var chess = new Chess(test.fen);
+      const chess = new Chess(test.fen);
       expect(JSON.stringify(chess.board()) === JSON.stringify(test.board)).toBe(true);
     })
   })
@@ -1556,7 +1556,7 @@ describe('Board Tests', function() {
 
 describe('Parse PGN Headers', function() {
   it('Github Issue #191 - whitespace before closing bracket', function(){
-    var pgn = [
+    const pgn = [
       '[Event "Reykjavik WCh"]',
       '[Site "Reykjavik WCh"]',
       '[Date "1972.01.07" ]',
@@ -1579,7 +1579,7 @@ describe('Parse PGN Headers', function() {
       '32. Qe5 Qe8 33. a4 Qd8 34. R1f2 Qe8 35. R2f3 Qd8 36. Bd3 Qe8',
       '37. Qe4 Nf6 38. Rxf6 gxf6 39. Rxf6 Kg8 40. Bc4 Kh8 41. Qf4 1-0'
     ];
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load_pgn(pgn.join('\n'));
     expect(chess.header()['Date']).toBe('1972.01.07');
 
@@ -1588,13 +1588,13 @@ describe('Parse PGN Headers', function() {
 
 describe('Regression Tests', function() {
   it('Github Issue #32 - castling flag reappearing', function() {
-    var chess = new Chess('b3k2r/5p2/4p3/1p5p/6p1/2PR2P1/BP3qNP/6QK b k - 2 28');
+    const chess = new Chess('b3k2r/5p2/4p3/1p5p/6p1/2PR2P1/BP3qNP/6QK b k - 2 28');
     chess.move({from:'a8', to:'g2'});
     expect(chess.fen() == '4k2r/5p2/4p3/1p5p/6p1/2PR2P1/BP3qbP/6QK w k - 0 29').toBe(true);
   });
 
   it('Github Issue #58 - placing more than one king', function() {
-    var chess = new Chess('N3k3/8/8/8/8/8/5b2/4K3 w - - 0 1');
+    const chess = new Chess('N3k3/8/8/8/8/8/5b2/4K3 w - - 0 1');
     expect(chess.put({type: 'k', color: 'w'}, 'a1')).toBe(false);
     chess.put({type: 'q', color: 'w'}, 'a1');
     chess.remove('a1');
@@ -1602,39 +1602,39 @@ describe('Regression Tests', function() {
   });
 
   it('Github Issue #85 (white) - SetUp and FEN should be accepted in load_pgn', function() {
-       var chess = new Chess();
-       var pgn = ['[SetUp "1"]', '[FEN "7k/5K2/4R3/8/8/8/8/8 w KQkq - 0 1"]', "", '1. Rh6#'];
-       var result = chess.load_pgn(pgn.join("\n"));
+       const chess = new Chess();
+       const pgn = ['[SetUp "1"]', '[FEN "7k/5K2/4R3/8/8/8/8/8 w KQkq - 0 1"]', "", '1. Rh6#'];
+       const result = chess.load_pgn(pgn.join("\n"));
        expect(result).toBe(true);
        expect(chess.fen()).toBe('7k/5K2/7R/8/8/8/8/8 b KQkq - 1 1');
   });
 
   it('Github Issue #85 (black) - SetUp and FEN should be accepted in load_pgn', function() {
-       var chess = new Chess();
-       var pgn = ['[SetUp "1"]', '[FEN "r4r1k/1p4b1/3p3p/5qp1/1RP5/6P1/3NP3/2Q2RKB b KQkq - 0 1"]', "", '1. ... Qc5+'];
-       var result = chess.load_pgn(pgn.join("\n"));
+       const chess = new Chess();
+       const pgn = ['[SetUp "1"]', '[FEN "r4r1k/1p4b1/3p3p/5qp1/1RP5/6P1/3NP3/2Q2RKB b KQkq - 0 1"]', "", '1. ... Qc5+'];
+       const result = chess.load_pgn(pgn.join("\n"));
        expect(result).toBe(true);
        expect(chess.fen()).toBe('r4r1k/1p4b1/3p3p/2q3p1/1RP5/6P1/3NP3/2Q2RKB w KQkq - 1 2');
   });
 
   it('Github Issue #98 (white) - Wrong movement number after setting a position via FEN', function () {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load('4r3/8/2p2PPk/1p6/pP2p1R1/P1B5/2P2K2/3r4 w - - 1 45');
     chess.move('f7');
-    var result = chess.pgn();
+    const result = chess.pgn();
     expect(result.match(/(45\. f7)$/)[0]).toBe('45. f7')
   })
 
   it('Github Issue #98 (black) - Wrong movement number after setting a position via FEN', function () {
-    var chess = new Chess();
+    const chess = new Chess();
     chess.load('4r3/8/2p2PPk/1p6/pP2p1R1/P1B5/2P2K2/3r4 b - - 1 45');
     chess.move('Rf1+');
-    var result = chess.pgn();
+    const result = chess.pgn();
     expect(result.match(/(45\. \.\.\. Rf1\+)$/)[0]).toBe('45. ... Rf1+');
   })
 
   it('Github Issue #129 load_pgn() should not clear headers if PGN contains SetUp and FEN tags', function () {
-    var pgn = [
+    const pgn = [
       '[Event "Test Olympiad"]',
       '[Site "Earth"]',
       '[Date "????.??.??"]',
@@ -1648,9 +1648,9 @@ describe('Regression Tests', function() {
       '1.Qd2 Be7 *'
     ];
 
-    var chess = new Chess();
-    var result = chess.load_pgn(pgn.join('\n'));
-    var expected = {
+    const chess = new Chess();
+    const result = chess.load_pgn(pgn.join('\n'));
+    const expected = {
       Event: 'Test Olympiad',
       Site: 'Earth',
       Date: '????.??.??',
@@ -1665,7 +1665,7 @@ describe('Regression Tests', function() {
   })
 
   it('Github Issue #129 clear() should clear the board and delete all headers with the exception of SetUp and FEN', function () {
-    var pgn = [
+    const pgn = [
       '[Event "Test Olympiad"]',
       '[Site "Earth"]',
       '[Date "????.??.??"]',
@@ -1679,10 +1679,10 @@ describe('Regression Tests', function() {
       '1.Qd2 Be7 *'
     ];
 
-    var chess = new Chess();
-    var result = chess.load_pgn(pgn.join('\n'));
+    const chess = new Chess();
+    const result = chess.load_pgn(pgn.join('\n'));
     chess.clear();
-    var expected = {
+    const expected = {
       FEN: '8/8/8/8/8/8/8/8 w - - 0 1',
       SetUp: '1'
     };
