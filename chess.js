@@ -227,14 +227,14 @@ const Chess = function(fen) {
     clear(keep_headers)
 
     for (let i = 0; i < position.length; i++) {
-      var piece = position.charAt(i)
+      const piece = position.charAt(i)
 
       if (piece === '/') {
         square += 8
       } else if (is_digit(piece)) {
         square += parseInt(piece, 10)
       } else {
-        var color = piece < 'a' ? WHITE : BLACK
+        const color = piece < 'a' ? WHITE : BLACK
         put({ type: piece.toLowerCase(), color: color }, algebraic(square))
         square++
       }
@@ -522,8 +522,8 @@ const Chess = function(fen) {
         (rank(to) === RANK_8 || rank(to) === RANK_1)
       ) {
         const pieces = [QUEEN, ROOK, BISHOP, KNIGHT]
-        for (var i = 0, len = pieces.length; i < len; i++) {
-          moves.push(build_move(board, from, to, flags, pieces[i]))
+        for (const piece of pieces) {
+          moves.push(build_move(board, from, to, flags, piece))
         }
       } else {
         moves.push(build_move(board, from, to, flags))
@@ -594,8 +594,7 @@ const Chess = function(fen) {
           }
         }
       } else {
-        for (var j = 0, len = PIECE_OFFSETS[piece.type].length; j < len; j++) {
-          const offset = PIECE_OFFSETS[piece.type][j]
+        for (const offset of PIECE_OFFSETS[piece.type]) {
           square = i
 
           while (true) {
@@ -664,10 +663,10 @@ const Chess = function(fen) {
 
     /* filter out illegal moves */
     const legal_moves = []
-    for (var i = 0, len = moves.length; i < len; i++) {
-      make_move(moves[i])
+    for (const move of moves) {
+      make_move(move)
       if (!king_attacked(us)) {
-        legal_moves.push(moves[i])
+        legal_moves.push(move)
       }
       undo_move()
     }
@@ -732,7 +731,7 @@ const Chess = function(fen) {
   }
 
   function attacked(color, square) {
-    for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+    for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
       /* did we run off the end of the board */
       if (i & 0x88) {
         i += 7
@@ -1232,7 +1231,7 @@ const Chess = function(fen) {
       make_move(move)
       if (!king_attacked(color)) {
         if (depth - 1 > 0) {
-          var child_nodes = perft(depth - 1)
+          const child_nodes = perft(depth - 1)
           nodes += child_nodes
         } else {
           nodes++
@@ -1412,7 +1411,7 @@ const Chess = function(fen) {
       const append_comment = function(move_string) {
         const comment = comments[generate_fen()]
         if (typeof comment !== 'undefined') {
-          var delimiter = move_string.length > 0 ? ' ' : '';
+          const delimiter = move_string.length > 0 ? ' ' : '';
           move_string = `${move_string}${delimiter}{${comment}}`
         }
         return move_string
@@ -1619,7 +1618,7 @@ const Chess = function(fen) {
        * we use {en,de}codeURIComponent here to support arbitrary UTF8
        * as a convenience for modern users */
 
-      var to_hex = function(string) {
+      const to_hex = function(string) {
         return Array
           .from(string)
           .map(function(c) {
@@ -1632,25 +1631,25 @@ const Chess = function(fen) {
           .join('')
       }
 
-      var from_hex = function(string) {
+      const from_hex = function(string) {
         return string.length == 0
           ? ''
           : decodeURIComponent('%' + string.match(/.{1,2}/g).join('%'))
       }
 
-      var encode_comment = function(string) {
+      const encode_comment = function(string) {
         string = string.replace(new RegExp(mask(newline_char), 'g'), ' ')
         return `{${to_hex(string.slice(1, string.length - 1))}}`
       }
 
-      var decode_comment = function(string) {
+      const decode_comment = function(string) {
         if (string.startsWith('{') && string.endsWith('}')) {
           return from_hex(string.slice(1, string.length - 1))
         }
       }
 
       /* delete header to get the moves */
-      var ms = pgn
+      let ms = pgn
         .replace(header_string, '')
         .replace(
           /* encode comments so they don't get deleted below */
@@ -1664,7 +1663,7 @@ const Chess = function(fen) {
         .replace(new RegExp(mask(newline_char), 'g'), ' ')
 
       /* delete recursive annotation variations */
-      var rav_regex = /(\([^\(\)]+\))+?/g
+      const rav_regex = /(\([^\(\)]+\))+?/g
       while (rav_regex.test(ms)) {
         ms = ms.replace(rav_regex, '')
       }
@@ -1679,17 +1678,17 @@ const Chess = function(fen) {
       ms = ms.replace(/\$\d+/g, '')
 
       /* trim and get array of moves */
-      var moves = trim(ms).split(new RegExp(/\s+/))
-
       /* delete empty entries */
-      moves = moves
+      const moves = trim(ms).split(new RegExp(/\s+/))
         .join(',')
         .replace(/,,+/g, ',')
         .split(',')
-      var move = ''
 
-      for (var half_move = 0; half_move < moves.length - 1; half_move++) {
-        var comment = decode_comment(moves[half_move])
+      let move = ''
+
+      let comment
+      for (let half_move = 0; half_move < moves.length - 1; half_move++) {
+        comment = decode_comment(moves[half_move])
         if (comment !== undefined) {
           comments[generate_fen()] = comment
           continue
@@ -1754,20 +1753,20 @@ const Chess = function(fen) {
 
       // allow the user to specify the sloppy move parser to work around over
       // disambiguation bugs in Fritz and Chessbase
-      var sloppy =
+      const sloppy =
         typeof options !== 'undefined' && 'sloppy' in options
           ? options.sloppy
           : false
 
-      var move_obj = null
+      let move_obj = null
 
       if (typeof move === 'string') {
         move_obj = move_from_san(move, sloppy)
       } else if (typeof move === 'object') {
-        var moves = generate_moves()
+        const moves = generate_moves()
 
         /* convert the pretty move object to an ugly move object */
-        for (var i = 0, len = moves.length; i < len; i++) {
+        for (let i = 0, len = moves.length; i < len; i++) {
           if (
             move.from === algebraic(moves[i].from) &&
             move.to === algebraic(moves[i].to) &&
@@ -1788,7 +1787,7 @@ const Chess = function(fen) {
       /* need to make a copy of move because we can't generate SAN after the
        * move is made
        */
-      var pretty_move = make_pretty(move_obj)
+      const pretty_move = make_pretty(move_obj)
 
       make_move(move_obj)
 
@@ -1796,7 +1795,7 @@ const Chess = function(fen) {
     },
 
     undo: function() {
-      var move = undo_move()
+      const move = undo_move()
       return move ? make_pretty(move) : null
     },
 
@@ -1822,7 +1821,7 @@ const Chess = function(fen) {
 
     square_color: function(square) {
       if (square in SQUARES) {
-        var sq_0x88 = SQUARES[square]
+        const sq_0x88 = SQUARES[square]
         return (rank(sq_0x88) + file(sq_0x88)) % 2 === 0 ? 'light' : 'dark'
       }
 
@@ -1830,9 +1829,9 @@ const Chess = function(fen) {
     },
 
     history: function(options) {
-      var reversed_history = []
-      var move_history = []
-      var verbose =
+      const reversed_history = []
+      const move_history = []
+      const verbose =
         typeof options !== 'undefined' &&
         'verbose' in options &&
         options.verbose
@@ -1842,7 +1841,7 @@ const Chess = function(fen) {
       }
 
       while (reversed_history.length > 0) {
-        var move = reversed_history.pop()
+        const move = reversed_history.pop()
         if (verbose) {
           move_history.push(make_pretty(move))
         } else {
@@ -1863,7 +1862,7 @@ const Chess = function(fen) {
     },
 
     delete_comment: function() {
-      var comment = comments[generate_fen()];
+      const comment = comments[generate_fen()];
       delete comments[generate_fen()];
       return comment;
     },
@@ -1879,7 +1878,7 @@ const Chess = function(fen) {
       prune_comments();
       return Object.keys(comments)
         .map(function(fen) {
-          var comment = comments[fen];
+          const comment = comments[fen];
           delete comments[fen];
           return {fen: fen, comment: comment};
         });
