@@ -1397,7 +1397,7 @@ const Chess = function(fen) {
       let header_exists = false
 
       /* add the PGN header headerrmation */
-      for (var i in header) {
+      for (const i in header) {
         /* TODO: order of enumerated properties in header object is not
          * guaranteed, see ECMA-262 spec (section 12.6.4)
          */
@@ -1409,8 +1409,8 @@ const Chess = function(fen) {
         result.push(newline)
       }
 
-      var append_comment = function(move_string) {
-        var comment = comments[generate_fen()]
+      const append_comment = function(move_string) {
+        const comment = comments[generate_fen()]
         if (typeof comment !== 'undefined') {
           var delimiter = move_string.length > 0 ? ' ' : '';
           move_string = `${move_string}${delimiter}{${comment}}`
@@ -1419,13 +1419,13 @@ const Chess = function(fen) {
       }
 
       /* pop all of history onto reversed_history */
-      var reversed_history = []
+      const reversed_history = []
       while (history.length > 0) {
         reversed_history.push(undo_move())
       }
 
-      var moves = []
-      var move_string = ''
+      const moves = []
+      let move_string = ''
 
       /* special case of a commented starting position with no moves */
       if (reversed_history.length === 0) {
@@ -1435,7 +1435,7 @@ const Chess = function(fen) {
       /* build the list of moves.  a move_string looks like: "3. e3 e6" */
       while (reversed_history.length > 0) {
         move_string = append_comment(move_string)
-        var move = reversed_history.pop()
+        const move = reversed_history.pop()
 
         /* if the position started with black to move, start PGN with 1. ... */
         if (!history.length && move.color === 'b') {
@@ -1469,7 +1469,7 @@ const Chess = function(fen) {
         return result.join('') + moves.join(' ')
       }
 
-      var strip = function() {
+      const strip = function() {
         if (result.length > 0 && result[result.length - 1] === ' ') {
           result.pop();
           return true;
@@ -1478,8 +1478,8 @@ const Chess = function(fen) {
       };
 
       /* NB: this does not preserve comment whitespace. */
-      var wrap_comment = function(width, move) {
-        for (var token of move.split(' ')) {
+      const wrap_comment = function(width, move) {
+        for (const token of move.split(' ')) {
           if (!token) {
             continue;
           }
@@ -1502,8 +1502,8 @@ const Chess = function(fen) {
       };
 
       /* wrap the PGN output at max_width */
-      var current_width = 0
-      for (var i = 0; i < moves.length; i++) {
+      let current_width = 0
+      for (let i = 0; i < moves.length; i++) {
         if (current_width + moves[i].length > max_width) {
           if (moves[i].includes('{')) {
             current_width = wrap_comment(current_width, moves[i]);
@@ -1533,7 +1533,7 @@ const Chess = function(fen) {
     load_pgn: function(pgn, options) {
       // allow the user to specify the sloppy move parser to work around over
       // disambiguation bugs in Fritz and Chessbase
-      var sloppy =
+      const sloppy =
         typeof options !== 'undefined' && 'sloppy' in options
           ? options.sloppy
           : false
@@ -1543,26 +1543,24 @@ const Chess = function(fen) {
       }
 
       function has_keys(object) {
-        for (var key in object) {
+        for (const key in object) {
           return true
         }
         return false
       }
 
       function parse_pgn_header(header, options) {
-        var newline_char =
+        const newline_char =
           typeof options === 'object' &&
           typeof options.newline_char === 'string'
             ? options.newline_char
             : '\r?\n'
-        var header_obj = {}
-        var headers = header.split(new RegExp(mask(newline_char)))
-        var key = ''
-        var value = ''
+        const header_obj = {}
+        const headers = header.split(new RegExp(mask(newline_char)))
 
-        for (var i = 0; i < headers.length; i++) {
-          key = headers[i].replace(/^\[([A-Z][A-Za-z]*)\s.*\]$/, '$1')
-          value = headers[i].replace(/^\[[A-Za-z]+\s"(.*)"\ *\]$/, '$1')
+        for (const header of headers) {
+          const key = header.replace(/^\[([A-Z][A-Za-z]*)\s.*\]$/, '$1')
+          const value = header.replace(/^\[[A-Za-z]+\s"(.*)"\ *\]$/, '$1')
           if (trim(key).length > 0) {
             header_obj[key] = value
           }
@@ -1571,7 +1569,7 @@ const Chess = function(fen) {
         return header_obj
       }
 
-      var newline_char =
+      const newline_char =
         typeof options === 'object' && typeof options.newline_char === 'string'
           ? options.newline_char
           : '\r?\n'
@@ -1579,7 +1577,7 @@ const Chess = function(fen) {
       // RegExp to split header. Takes advantage of the fact that header and movetext
       // will always have a blank line between them (ie, two newline_char's).
       // With default newline_char, will equal: /^(\[((?:\r?\n)|.)*\])(?:\r?\n){2}/
-      var header_regex = new RegExp(
+      const header_regex = new RegExp(
         '^(\\[((?:' +
           mask(newline_char) +
           ')|.)*\\])' +
@@ -1589,7 +1587,7 @@ const Chess = function(fen) {
       )
 
       // If no header given, begin with moves.
-      var header_string = header_regex.test(pgn)
+      const header_string = header_regex.test(pgn)
         ? header_regex.exec(pgn)[1]
         : ''
 
@@ -1597,8 +1595,8 @@ const Chess = function(fen) {
       reset()
 
       /* parse PGN header */
-      var headers = parse_pgn_header(header_string, options)
-      for (var key in headers) {
+      const headers = parse_pgn_header(header_string, options)
+      for (const key in headers) {
         set_header([key, headers[key]])
       }
 
