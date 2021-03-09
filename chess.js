@@ -464,8 +464,8 @@ const Chess = function(fen) {
 
     /* don't let the user place more than one king */
     if (
-      piece.type == KING &&
-      !(kings[piece.color] == EMPTY || kings[piece.color] == sq)
+      piece.type === KING &&
+      !(kings[piece.color] === EMPTY || kings[piece.color] === sq)
     ) {
       return false
     }
@@ -1144,10 +1144,10 @@ const Chess = function(fen) {
       } else {
         if (
           matches &&
-          (!piece || piece.toLowerCase() == move.piece) &&
-          SQUARES[from] == move.from &&
-          SQUARES[to] == move.to &&
-          (!promotion || promotion.toLowerCase() == move.promotion)
+          (!piece || piece.toLowerCase() === move.piece) &&
+          SQUARES[from] === move.from &&
+          SQUARES[to] === move.to &&
+          (!promotion || promotion.toLowerCase() === move.promotion)
         ) {
           return move
         }
@@ -1559,7 +1559,7 @@ const Chess = function(fen) {
 
         for (const header of headers) {
           const key = header.replace(/^\[([A-Z][A-Za-z]*)\s.*\]$/, '$1')
-          const value = header.replace(/^\[[A-Za-z]+\s"(.*)"\ *\]$/, '$1')
+          const value = header.replace(/^\[[A-Za-z]+\s"(.*)" *\]$/, '$1')
           if (trim(key).length > 0) {
             header_obj[key] = value
           }
@@ -1626,7 +1626,7 @@ const Chess = function(fen) {
              * so we handle these ourselves */
             return c.charCodeAt(0) < 128
               ? c.charCodeAt(0).toString(16)
-              : encodeURIComponent(c).replace(/\%/g, '').toLowerCase()
+              : encodeURIComponent(c).replace(/%/g, '').toLowerCase()
           })
           .join('')
       }
@@ -1653,7 +1653,7 @@ const Chess = function(fen) {
         .replace(header_string, '')
         .replace(
           /* encode comments so they don't get deleted below */
-          new RegExp(`(\{[^}]*\})+?|;([^${mask(newline_char)}]*)`, 'g'),
+          new RegExp(`({[^}]*})+?|;([^${mask(newline_char)}]*)`, 'g'),
           function(match, bracket, semicolon) {
             return bracket !== undefined
               ? encode_comment(bracket)
@@ -1663,7 +1663,7 @@ const Chess = function(fen) {
         .replace(new RegExp(mask(newline_char), 'g'), ' ')
 
       /* delete recursive annotation variations */
-      const rav_regex = /(\([^\(\)]+\))+?/g
+      const rav_regex = /(\([^()]+\))+?/g
       while (rav_regex.test(ms)) {
         ms = ms.replace(rav_regex, '')
       }
@@ -1891,6 +1891,7 @@ const Chess = function(fen) {
 if (typeof exports !== 'undefined') exports.Chess = Chess
 /* export Chess object for any RequireJS compatible environment */
 if (typeof define !== 'undefined')
+  // eslint-disable-next-line no-undef
   define(function() {
     return Chess
   })
