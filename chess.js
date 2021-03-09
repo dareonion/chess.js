@@ -25,7 +25,10 @@
  *
  *----------------------------------------------------------------------------*/
 
-const Chess = function(fen) {
+const DEFAULT_POSITION =
+      'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+
+const Chess = function(fen = DEFAULT_POSITION) {
   const BLACK = 'b'
   const WHITE = 'w'
 
@@ -164,17 +167,9 @@ const Chess = function(fen) {
   /* if the user passes in a fen string, load it, else default to
    * starting position
    */
-  if (typeof fen === 'undefined') {
-    load(DEFAULT_POSITION)
-  } else {
-    load(fen)
-  }
+  load(fen)
 
-  function clear(keep_headers) {
-    if (typeof keep_headers === 'undefined') {
-      keep_headers = false
-    }
-
+  function clear(keep_headers = false) {
     board = new Array(128)
     kings = { w: EMPTY, b: EMPTY }
     turn = WHITE
@@ -211,11 +206,7 @@ const Chess = function(fen) {
     load(DEFAULT_POSITION)
   }
 
-  function load(fen, keep_headers) {
-    if (typeof keep_headers === 'undefined') {
-      keep_headers = false
-    }
-
+  function load(fen, keep_headers = false) {
     const tokens = fen.split(/\s+/)
     const position = tokens[0]
     let square = 0
@@ -514,7 +505,7 @@ const Chess = function(fen) {
     return move
   }
 
-  function generate_moves(options) {
+  function generate_moves(options = {}) {
     function add_move(board, moves, from, to, flags) {
       /* if pawn promotion */
       if (
@@ -540,13 +531,10 @@ const Chess = function(fen) {
     let single_square = false
 
     /* do we want legal moves? */
-    const legal =
-      typeof options !== 'undefined' && 'legal' in options
-        ? options.legal
-        : true
+    const legal = options.legal ?? true
 
     /* are we generating moves for a single square? */
-    if (typeof options !== 'undefined' && 'square' in options) {
+    if ('square' in options) {
       if (options.square in SQUARES) {
         first_sq = last_sq = SQUARES[options.square]
         single_square = true
@@ -1285,7 +1273,7 @@ const Chess = function(fen) {
       return reset()
     },
 
-    moves: function(options) {
+    moves: function(options = {}) {
       /* The internal representation of a chess move is in 0x88 format, and
        * not meant to be human-readable.  The code below converts the 0x88
        * square coordinates to algebraic coordinates.  It also prunes an
@@ -1299,11 +1287,7 @@ const Chess = function(fen) {
         /* does the user want a full move object (most likely not), or just
          * SAN
          */
-        if (
-          typeof options !== 'undefined' &&
-          'verbose' in options &&
-          options.verbose
-        ) {
+        if (options.verbose ?? false) {
           moves.push(make_pretty(ugly_move))
         } else {
           moves.push(move_to_san(ugly_move, false))
@@ -1457,7 +1441,7 @@ const Chess = function(fen) {
       }
 
       /* is there a result? */
-      if (typeof header.Result !== 'undefined') {
+      if ('Result' in header) {
         moves.push(header.Result)
       }
 
