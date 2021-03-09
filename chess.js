@@ -270,7 +270,7 @@ const Chess = function(fen) {
    * we're at it
    */
   function validate_fen(fen) {
-    var errors = {
+    const errors = {
       0: 'No errors.',
       1: 'FEN string must contain six space-delimited fields.',
       2: '6th field (move number) must be a positive integer.',
@@ -286,18 +286,18 @@ const Chess = function(fen) {
     }
 
     /* 1st criterion: 6 space-seperated fields? */
-    var tokens = fen.split(/\s+/)
+    const tokens = fen.split(/\s+/)
     if (tokens.length !== 6) {
       return { valid: false, error_number: 1, error: errors[1] }
     }
 
     /* 2nd criterion: move number field is a integer value > 0? */
-    if (isNaN(tokens[5]) || parseInt(tokens[5], 10) <= 0) {
+    if (Number.isNaN(Number(tokens[5])) || parseInt(tokens[5], 10) <= 0) {
       return { valid: false, error_number: 2, error: errors[2] }
     }
 
     /* 3rd criterion: half move counter is an integer >= 0? */
-    if (isNaN(tokens[4]) || parseInt(tokens[4], 10) < 0) {
+    if (Number.isNaN(Number(tokens[4])) || parseInt(tokens[4], 10) < 0) {
       return { valid: false, error_number: 3, error: errors[3] }
     }
 
@@ -317,26 +317,26 @@ const Chess = function(fen) {
     }
 
     /* 7th criterion: 1st field contains 8 rows? */
-    var rows = tokens[0].split('/')
+    const rows = tokens[0].split('/')
     if (rows.length !== 8) {
       return { valid: false, error_number: 7, error: errors[7] }
     }
 
     /* 8th criterion: every row is valid? */
-    for (var i = 0; i < rows.length; i++) {
+    for (const row of rows) {
       /* check for right sum of fields AND not two numbers in succession */
-      var sum_fields = 0
-      var previous_was_number = false
+      let sum_fields = 0
+      let previous_was_number = false
 
-      for (var k = 0; k < rows[i].length; k++) {
-        if (!isNaN(rows[i][k])) {
+      for (const field of row) {
+        if (!Number.isNaN(Number(field))) {
           if (previous_was_number) {
             return { valid: false, error_number: 8, error: errors[8] }
           }
-          sum_fields += parseInt(rows[i][k], 10)
+          sum_fields += parseInt(field, 10)
           previous_was_number = true
         } else {
-          if (!/^[prnbqkPRNBQK]$/.test(rows[i][k])) {
+          if (!/^[prnbqkPRNBQK]$/.test(field)) {
             return { valid: false, error_number: 9, error: errors[9] }
           }
           sum_fields += 1
@@ -349,8 +349,8 @@ const Chess = function(fen) {
     }
 
     if (
-      (tokens[3][1] == '3' && tokens[1] == 'w') ||
-      (tokens[3][1] == '6' && tokens[1] == 'b')
+      (tokens[3][1] === '3' && tokens[1] === 'w') ||
+      (tokens[3][1] === '6' && tokens[1] === 'b')
     ) {
       return { valid: false, error_number: 11, error: errors[11] }
     }
