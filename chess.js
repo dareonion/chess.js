@@ -216,9 +216,9 @@ const Chess = function(fen) {
       keep_headers = false
     }
 
-    var tokens = fen.split(/\s+/)
-    var position = tokens[0]
-    var square = 0
+    const tokens = fen.split(/\s+/)
+    const position = tokens[0]
+    let square = 0
 
     if (!validate_fen(fen).valid) {
       return false
@@ -226,7 +226,7 @@ const Chess = function(fen) {
 
     clear(keep_headers)
 
-    for (var i = 0; i < position.length; i++) {
+    for (let i = 0; i < position.length; i++) {
       var piece = position.charAt(i)
 
       if (piece === '/') {
