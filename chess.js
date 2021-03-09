@@ -360,19 +360,19 @@ const Chess = function(fen) {
   }
 
   function generate_fen() {
-    var empty = 0
-    var fen = ''
+    let empty = 0
+    let fen = ''
 
-    for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
-      if (board[i] == null) {
+    for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
+      if (board[i] === null || board[i] === undefined) {
         empty++
       } else {
         if (empty > 0) {
           fen += empty
           empty = 0
         }
-        var color = board[i].color
-        var piece = board[i].type
+        const color = board[i].color
+        const piece = board[i].type
 
         fen += color === WHITE ? piece.toUpperCase() : piece.toLowerCase()
       }
@@ -391,7 +391,7 @@ const Chess = function(fen) {
       }
     }
 
-    var cflags = ''
+    let cflags = ''
     if (castling[WHITE] & BITS.KSIDE_CASTLE) {
       cflags += 'K'
     }
@@ -407,7 +407,7 @@ const Chess = function(fen) {
 
     /* do we have an empty castling flag? */
     cflags = cflags || '-'
-    var epflags = ep_square === EMPTY ? '-' : algebraic(ep_square)
+    const epflags = ep_square === EMPTY ? '-' : algebraic(ep_square)
 
     return [fen, turn, cflags, epflags, half_moves, move_number].join(' ')
   }
@@ -440,7 +440,7 @@ const Chess = function(fen) {
   }
 
   function get(square) {
-    var piece = board[SQUARES[square]]
+    const piece = board[SQUARES[square]]
     return piece ? { type: piece.type, color: piece.color } : null
   }
 
@@ -460,7 +460,7 @@ const Chess = function(fen) {
       return false
     }
 
-    var sq = SQUARES[square]
+    const sq = SQUARES[square]
 
     /* don't let the user place more than one king */
     if (
@@ -481,7 +481,7 @@ const Chess = function(fen) {
   }
 
   function remove(square) {
-    var piece = get(square)
+    const piece = get(square)
     board[SQUARES[square]] = null
     if (piece && piece.type === KING) {
       kings[piece.color] = EMPTY
@@ -493,7 +493,7 @@ const Chess = function(fen) {
   }
 
   function build_move(board, from, to, flags, promotion) {
-    var move = {
+    const move = {
       color: turn,
       from: from,
       to: to,
